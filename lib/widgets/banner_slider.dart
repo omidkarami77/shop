@@ -1,5 +1,3 @@
-import 'package:flutter/src/widgets/container.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/material.dart';
 import 'package:shop/constants/colors.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
