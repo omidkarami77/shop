@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shop/constants/colors.dart';
+import 'package:shop/widgets/banner_slider.dart';
+import 'package:shop/widgets/product_item.dart';
 
 void main() {
   runApp(const MyApp());
@@ -14,182 +16,134 @@ class MyApp extends StatelessWidget {
       home: Scaffold(
         backgroundColor: ColorApp.backgroundScreenColor,
         body: SafeArea(
-            child: Center(
-          child: Container(
-            width: 160,
-            height: 216,
-            decoration: const BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.all(
-                Radius.circular(15),
+          child: CustomScrollView(slivers: [
+            SliverToBoxAdapter(
+              child: BannerSlider(),
+            ),
+            SliverToBoxAdapter(
+              child: dastebandi(),
+            ),
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: const EdgeInsets.only(right: 44),
+                child: SizedBox(
+                  height: 100,
+                  child: ListView.builder(
+                      scrollDirection: Axis.horizontal,
+                      itemCount: 10,
+                      itemBuilder: (context, index) {
+                        return Padding(
+                          padding: const EdgeInsets.only(left: 20),
+                          child: categoryHorizontalItemList(),
+                        );
+                      }),
+                ),
               ),
             ),
-            child: Column(mainAxisSize: MainAxisSize.max, children: [
-              Stack(
-                alignment: AlignmentDirectional.center,
-                children: [
-                  Expanded(child: Container()),
-                  Image.asset("assets/images/iphone.png"),
-                  Positioned(
-                    top: 0,
-                    right: 10,
-                    child: SizedBox(
-                        width: 24,
-                        height: 24,
-                        child: Image.asset(
-                            "assets/images/active_fav_product.png")),
+            SliverToBoxAdapter(
+              child: proforosh(),
+            ),
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: const EdgeInsets.only(right: 44),
+                child: SizedBox(
+                  height: 200,
+                  child: ListView.builder(
+                    scrollDirection: Axis.horizontal,
+                    itemBuilder: (context, index) {
+                      return Padding(
+                        padding: const EdgeInsets.only(left: 20),
+                        child: ProductItem(),
+                      );
+                    },
+                    itemCount: 10,
                   ),
-                  Positioned(
-                    bottom: 0,
-                    left: 5,
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: Colors.red,
-                        borderRadius: BorderRadius.all(
-                          Radius.circular(15),
-                        ),
-                      ),
-                      child: Padding(
-                        padding:
-                            EdgeInsets.symmetric(vertical: 2, horizontal: 8),
-                        child: Text(
-                          "%3",
-                          style: TextStyle(
-                              fontFamily: "SB",
-                              fontSize: 12,
-                              color: Colors.white),
-                        ),
-                      ),
-                    ),
-                  )
-                ],
+                ),
               ),
-              const Spacer(),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  const Padding(
-                    padding: EdgeInsets.only(
-                        left: 10, right: 10, top: 10, bottom: 10),
-                    child: Text(
-                      "آیفون 13 پرو مکس",
-                      style: TextStyle(fontSize: 14, fontFamily: "SM"),
-                    ),
+            ),
+            SliverToBoxAdapter(
+              child: probazdid(),
+            ),
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: const EdgeInsets.only(right: 44),
+                child: SizedBox(
+                  height: 200,
+                  child: ListView.builder(
+                    scrollDirection: Axis.horizontal,
+                    itemBuilder: (context, index) {
+                      return Padding(
+                        padding: const EdgeInsets.only(left: 20),
+                        child: ProductItem(),
+                      );
+                    },
+                    itemCount: 10,
                   ),
-                  Container(
-                    height: 53,
-                    width: 160,
-                    decoration: const BoxDecoration(
-                      color: ColorApp.blue,
-                      borderRadius: BorderRadius.only(
-                        bottomLeft: Radius.circular(15),
-                        bottomRight: Radius.circular(15),
-                      ),
-                      boxShadow: [
-                        BoxShadow(
-                            color: ColorApp.blue,
-                            blurRadius: 25,
-                            spreadRadius: -12,
-                            offset: Offset(0.0, 15))
-                      ],
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 10),
-                      child: Row(mainAxisSize: MainAxisSize.max, children: [
-                        const Padding(
-                          padding: EdgeInsets.only(right: 5),
-                          child: Text(
-                            "تومان",
-                            style: TextStyle(
-                                fontFamily: "SM",
-                                fontSize: 12,
-                                color: Colors.white),
-                          ),
-                        ),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: const [
-                            Text(
-                              "49.800.000",
-                              style: TextStyle(
-                                  fontFamily: "SM",
-                                  decoration: TextDecoration.lineThrough,
-                                  fontSize: 12,
-                                  color: Colors.white),
-                            ),
-                            Text(
-                              "48.800.000",
-                              style: TextStyle(
-                                  fontFamily: "SM",
-                                  fontSize: 12,
-                                  color: Colors.white),
-                            )
-                          ],
-                        ),
-                        const Spacer(),
-                        SizedBox(
-                            width: 24,
-                            height: 20,
-                            child: Image.asset(
-                                "assets/images/icon_right_arrow_cricle.png"))
-                      ]),
-                    ),
-                  ),
-                ],
+                ),
               ),
-            ]),
-          ),
-        )),
+            )
+          ]),
+        ),
       ),
     );
   }
-}
 
-// ignore: camel_case_types
-class categoryHorizontalItemList extends StatelessWidget {
-  const categoryHorizontalItemList({
-    super.key,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Stack(
-          alignment: AlignmentDirectional.center,
-          children: [
-            Container(
-              height: 56,
-              width: 56,
-              decoration: ShapeDecoration(
-                  color: Colors.red,
-                  shadows: const [
-                    BoxShadow(
-                      color: Colors.red,
-                      blurRadius: 25,
-                      spreadRadius: -14,
-                      offset: Offset(0.0, 15),
-                    ),
-                  ],
-                  shape: ContinuousRectangleBorder(
-                      borderRadius: BorderRadius.circular(40))),
-            ),
-            const Icon(
-              Icons.mouse,
-              color: Colors.white,
-              size: 30,
-            ),
-          ],
+  Padding proforosh() {
+    return Padding(
+      padding: const EdgeInsets.only(left: 44, right: 44, bottom: 20),
+      child: Row(children: [
+        Image.asset('assets/images/icon_left_categroy.png'),
+        SizedBox(
+          width: 10,
         ),
-        const SizedBox(
-          height: 10,
+        Text(
+          "مشاهده همه",
+          style:
+              TextStyle(fontFamily: "SB", color: ColorApp.blue, fontSize: 12),
         ),
-        const Text(
-          "hello",
-          style: TextStyle(fontFamily: 'SB', fontSize: 12),
+        Spacer(),
+        Text(
+          "پر فروش ترین ها",
+          style:
+              TextStyle(fontFamily: "SB", color: ColorApp.grey, fontSize: 12),
         )
-      ],
+      ]),
+    );
+  }
+
+  Padding dastebandi() {
+    return Padding(
+      padding: const EdgeInsets.only(left: 44, right: 44, bottom: 20),
+      child: Row(mainAxisAlignment: MainAxisAlignment.end, children: [
+        Text(
+          "دسته بندی",
+          style:
+              TextStyle(fontFamily: "SB", color: ColorApp.grey, fontSize: 12),
+        ),
+      ]),
+    );
+  }
+
+  Padding probazdid() {
+    return Padding(
+      padding: const EdgeInsets.only(left: 44, right: 44, bottom: 20, top: 32),
+      child: Row(children: [
+        Image.asset('assets/images/icon_left_categroy.png'),
+        SizedBox(
+          width: 10,
+        ),
+        Text(
+          "مشاهده همه",
+          style:
+              TextStyle(fontFamily: "SB", color: ColorApp.blue, fontSize: 12),
+        ),
+        Spacer(),
+        Text(
+          "پر بازدید ترین ها",
+          style:
+              TextStyle(fontFamily: "SB", color: ColorApp.grey, fontSize: 12),
+        )
+      ]),
     );
   }
 }
