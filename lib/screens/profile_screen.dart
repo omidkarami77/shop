@@ -39,12 +39,12 @@ class ProfileScreen extends StatelessWidget {
               ]),
             ),
           ),
-          Text(
+          const Text(
             "امید کرمی",
             style: TextStyle(fontSize: 16, fontFamily: "SB"),
           ),
-          Padding(
-            padding: const EdgeInsets.only(top: 7, bottom: 30),
+          const Padding(
+            padding: EdgeInsets.only(top: 7, bottom: 30),
             child: Text(
               "09305295898",
               style:
@@ -57,7 +57,7 @@ class ProfileScreen extends StatelessWidget {
               textDirection: TextDirection.rtl,
               spacing: 20,
               runSpacing: 20,
-              children: [
+              children: const [
                 CategoryItemChip(),
                 CategoryItemChip(),
                 CategoryItemChip(),
@@ -71,25 +71,25 @@ class ProfileScreen extends StatelessWidget {
               ],
             ),
           ),
-          Spacer(),
-          Padding(
-            padding: const EdgeInsets.only(bottom: 5),
+          const Spacer(),
+          const Padding(
+            padding: EdgeInsets.only(bottom: 5),
             child: Text(
               "اپل شاپ",
               style: TextStyle(
                   fontFamily: "SM", fontSize: 10, color: ColorApp.grey),
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.only(bottom: 5),
+          const Padding(
+            padding: EdgeInsets.only(bottom: 5),
             child: Text(
               "V-1.0.00",
               style: TextStyle(
                   fontFamily: "SM", fontSize: 10, color: ColorApp.grey),
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.only(bottom: 32),
+          const Padding(
+            padding: EdgeInsets.only(bottom: 32),
             child: Text(
               "Instagram.com/Mojavad-dev",
               style: TextStyle(

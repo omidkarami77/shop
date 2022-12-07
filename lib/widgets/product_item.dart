@@ -22,7 +22,9 @@ class ProductItem extends StatelessWidget {
         Stack(
           alignment: AlignmentDirectional.center,
           children: [
-            Expanded(child: Container()),
+            Container(
+              width: double.infinity,
+            ),
             Image.asset("assets/images/iphone.png"),
             Positioned(
               top: 0,
