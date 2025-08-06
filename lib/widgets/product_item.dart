@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:shop/constants/colors.dart';
 
 class ProductItem extends StatelessWidget {
@@ -30,7 +29,7 @@ class ProductItem extends StatelessWidget {
           Stack(
             alignment: AlignmentDirectional.center,
             children: [
-              Expanded(child: Container()),
+              Container(width: double.infinity),
               Image.asset("assets/images/iphone.png"),
               Positioned(
                 top: 0,
