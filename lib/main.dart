@@ -2,13 +2,18 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:shop/constants/colors.dart';
+import 'package:shop/dr.dart';
+import 'package:shop/screens/card_screen.dart';
 import 'package:shop/screens/category_screen.dart';
 import 'package:shop/screens/home_screen.dart';
+import 'package:shop/screens/login_screen.dart';
 
-import 'package:shop/screens/product_list_screen.dart';
-import 'package:shop/screens/profile_screen.dart';
+import 'package:shop/screens/test.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  // Initialize dependency injection
+  await getItInit();
   runApp(const MyApp());
 }
 
@@ -176,5 +181,5 @@ class _MyAppState extends State<MyApp> {
 }
 
 List<Widget> getScreens() {
-  return [ProfileScreen(), ProductListScreen(), CategoryScreen(), HomeScreen()];
+  return [LoginScreen(), CardScreen(), CategoryScreen(), HomeScreen()];
 }

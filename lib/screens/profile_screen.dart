@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shop/constants/colors.dart';
-import 'package:shop/screens/home_screen.dart';
+
 import 'package:shop/widgets/category_icon_item_chip.dart';
-import 'package:shop/widgets/product_item.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
