@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:shop/constants/colors.dart';
-import 'package:shop/widgets/product_item.dart';
 
 class ProductListScreen extends StatelessWidget {
   const ProductListScreen({super.key});
@@ -67,7 +66,8 @@ class ProductListScreen extends StatelessWidget {
 
             sliver: SliverGrid(
               delegate: SliverChildBuilderDelegate((context, index) {
-                return ProductItem();
+                /* return ProductItem(); */
+                return Text("hello");
               }),
               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 2,

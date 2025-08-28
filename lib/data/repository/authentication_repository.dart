@@ -1,5 +1,5 @@
 import 'package:dartz/dartz.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+
 import 'package:shop/data/datasource/authentication_datasource.dart';
 import 'package:shop/dr.dart';
 import 'package:shop/util/api_exception.dart';
@@ -17,8 +17,8 @@ abstract class IAuthenticationRepository {
 
 class AuthenticationRepository implements IAuthenticationRepository {
   final IAuthenticationRemote _datasource = locator.get();
-  final SharedPreferences _sharedPreferences = locator.get();
 
+  @override
   Future<Either<String, String>> register(
     String username,
     String password,

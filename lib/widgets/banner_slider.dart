@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:shop/constants/colors.dart';
+import 'package:shop/data/model/banner.dart';
+import 'package:shop/widgets/catched_image.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 class BannerSlider extends StatelessWidget {
-  const BannerSlider({super.key});
+  final List<BannerModel> banners;
+  const BannerSlider(this.banners, {super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -13,24 +16,19 @@ class BannerSlider extends StatelessWidget {
       alignment: AlignmentDirectional.bottomCenter,
       children: [
         SizedBox(
-          height: 200,
+          height: 178,
           child: PageView.builder(
             controller: controller,
             itemBuilder: ((context, index) {
-              return Padding(
-                padding: const EdgeInsets.only(left: 12, right: 12),
-                child: Container(
-                  color: Colors.red,
-                  child: Center(
-                    child: Text(
-                      'Page $index',
-                      style: TextStyle(fontSize: 24, color: Colors.white),
-                    ),
-                  ),
+              return Container(
+                margin: const EdgeInsets.symmetric(horizontal: 10),
+                child: CachedImage(
+                  radius: 30,
+                  imageUrl: banners[index].thumbnail,
                 ),
               );
             }),
-            itemCount: 3,
+            itemCount: banners.length,
           ),
         ),
         Positioned(
@@ -40,10 +38,10 @@ class BannerSlider extends StatelessWidget {
             count: 3,
             effect: ExpandingDotsEffect(
               expansionFactor: 5,
-              dotHeight: 10,
+              dotHeight: 6,
               dotColor: Colors.white,
               activeDotColor: ColorApplication.blueIndicator,
-              dotWidth: 10,
+              dotWidth: 6,
             ),
           ),
         ),

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:shop/bloc/authentication/auth_bloc.dart';
 import 'package:shop/constants/colors.dart';
 
 class LoginScreen extends StatelessWidget {
@@ -6,8 +8,12 @@ class LoginScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    TextEditingController usernameController = TextEditingController();
-    TextEditingController passwordController = TextEditingController();
+    TextEditingController usernameController = TextEditingController(
+      text: 'amirahmad',
+    );
+    TextEditingController passwordController = TextEditingController(
+      text: '12345678',
+    );
     return Directionality(
       textDirection: TextDirection.rtl,
       child: Scaffold(
@@ -102,24 +108,63 @@ class LoginScreen extends StatelessWidget {
                       ),
                     ),
                     SizedBox(height: 20),
-                    ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        minimumSize: Size(200, 50),
-                        backgroundColor: ColorApplication.blueIndicator,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        padding: EdgeInsets.symmetric(vertical: 15),
-                      ),
-                      onPressed: () {},
-                      child: Text(
-                        "ورود به حساب کاربری",
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontFamily: "SB",
-                          fontSize: 18,
-                        ),
-                      ),
+                    BlocBuilder<AuthBloc, AuthState>(
+                      builder: (context, state) {
+                        if (state is AuthenticationInitial) {
+                          return ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              minimumSize: Size(200, 50),
+                              backgroundColor: ColorApplication.blueIndicator,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              padding: EdgeInsets.symmetric(vertical: 15),
+                            ),
+                            onPressed: () {
+                              BlocProvider.of<AuthBloc>(context).add(
+                                AuthLoginRequest(
+                                  usernameController.text,
+                                  passwordController.text,
+                                ),
+                              );
+                            },
+                            child: Text(
+                              "ورود به حساب کاربری",
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontFamily: "SB",
+                                fontSize: 18,
+                              ),
+                            ),
+                          );
+                        }
+                        if (state is AuthSateLoading) {
+                          return Center(child: CircularProgressIndicator());
+                        }
+
+                        if (state is AuthResponseState) {
+                          return state.response.fold(
+                            (error) => Text(
+                              error,
+                              style: TextStyle(
+                                color: Colors.red,
+                                fontFamily: "SM",
+                                fontSize: 16,
+                              ),
+                            ),
+                            (success) => Text(
+                              success,
+                              style: TextStyle(
+                                color: Colors.green,
+                                fontFamily: "SM",
+                                fontSize: 16,
+                              ),
+                            ),
+                          );
+                        }
+
+                        return Text("خطای نا مشخص");
+                      },
                     ),
                   ],
                 ),

@@ -1,14 +1,16 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:shop/bloc/authentication/auth_bloc.dart';
+import 'package:shop/bloc/home/home_bloc.dart';
+import 'package:shop/bloc/category/bloc/category_bloc.dart';
 import 'package:shop/constants/colors.dart';
 import 'package:shop/dr.dart';
 import 'package:shop/screens/card_screen.dart';
 import 'package:shop/screens/category_screen.dart';
 import 'package:shop/screens/home_screen.dart';
 import 'package:shop/screens/login_screen.dart';
-
-import 'package:shop/screens/test.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -37,7 +39,10 @@ class _MyAppState extends State<MyApp> {
           index: selectedBottomNavigationIndex,
           children: getScreens(),
         ),
-
+        /*    body: BlocProvider(
+          create: (context) => AuthBloc(),
+          child: LoginScreen(),
+        ), */
         bottomNavigationBar: ClipRRect(
           child: BackdropFilter(
             filter: ImageFilter.blur(sigmaX: 40, sigmaY: 40),
@@ -181,5 +186,13 @@ class _MyAppState extends State<MyApp> {
 }
 
 List<Widget> getScreens() {
-  return [LoginScreen(), CardScreen(), CategoryScreen(), HomeScreen()];
+  return [
+    BlocProvider(create: (context) => AuthBloc(), child: LoginScreen()),
+    CardScreen(),
+    BlocProvider(create: (context) => CategoryBloc(), child: CategoryScreen()),
+    Directionality(
+      textDirection: TextDirection.rtl,
+      child: BlocProvider(create: (context) => HomeBloc(), child: HomeScreen()),
+    ),
+  ];
 }

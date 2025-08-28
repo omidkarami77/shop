@@ -14,14 +14,14 @@ abstract class IAuthenticationRemote {
 
 class AuthenticationRemote implements IAuthenticationRemote {
   final Dio _dio = locator.get();
-
+  @override
   Future<void> register(
     String username,
     String password,
     String passwordConfirm,
   ) async {
     try {
-      final response = await _dio.post(
+      await _dio.post(
         'api/collections/users/records',
         data: {
           'username': username,
@@ -29,11 +29,6 @@ class AuthenticationRemote implements IAuthenticationRemote {
           'passwordConfirm': passwordConfirm,
         },
       );
-      if (response.statusCode == 200 || response.statusCode == 201) {
-        print('Registration successful: ${response.data}');
-      } else {
-        print('Registration failed with status: ${response.statusCode}');
-      }
     } on DioException catch (e) {
       throw ApiException(
         code: e.response?.statusCode,

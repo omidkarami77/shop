@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shop/constants/colors.dart';
 
-import 'package:shop/widgets/category_icon_item_chip.dart';
-
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
 
@@ -83,7 +81,7 @@ class ProfileScreen extends StatelessWidget {
                 spacing: 30,
                 runSpacing: 20,
                 children: [
-                  CategoryItemChip(),
+                  /* CategoryItemChip(),
 
                   CategoryItemChip(),
 
@@ -101,6 +99,8 @@ class ProfileScreen extends StatelessWidget {
                   CategoryItemChip(),
 
                   CategoryItemChip(),
+
+                  */
                 ],
               ),
             ),

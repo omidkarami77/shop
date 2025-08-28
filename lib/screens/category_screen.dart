@@ -1,9 +1,28 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:shop/bloc/category/bloc/category_bloc.dart';
 import 'package:shop/constants/colors.dart';
+import 'package:shop/data/model/category.dart';
 
-class CategoryScreen extends StatelessWidget {
+import 'package:shop/widgets/catched_image.dart';
+
+class CategoryScreen extends StatefulWidget {
   const CategoryScreen({super.key});
 
+  @override
+  State<CategoryScreen> createState() => _CategoryScreenState();
+}
+
+class _CategoryScreenState extends State<CategoryScreen> {
+  @override
+  initState() {
+    BlocProvider.of<CategoryBloc>(context).add(CategoryRequestListEvent());
+
+    super.initState();
+    // You can initialize any data or state here if needed
+  }
+
+  List<CategoryModel>? categories;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -62,36 +81,63 @@ class CategoryScreen extends StatelessWidget {
                 ),
               ),
             ),
-            SliverPadding(
-              padding: const EdgeInsets.symmetric(horizontal: 44),
-
-              sliver: SliverGrid(
-                delegate: SliverChildBuilderDelegate((context, index) {
-                  return Container(
-                    height: 160,
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(15),
-                      boxShadow: [
-                        BoxShadow(
-                          // ignore: deprecated_member_use
-                          color: Colors.black.withOpacity(0.1),
-                          blurRadius: 10,
-                          spreadRadius: -5,
-                          offset: Offset(0, 5),
-                        ),
-                      ],
+            BlocBuilder<CategoryBloc, CategoryState>(
+              builder: (context, state) {
+                if (state is CategoryLoading) {
+                  return SliverToBoxAdapter(
+                    child: Center(
+                      child: CircularProgressIndicator(
+                        color: ColorApplication.blueIndicator,
+                      ),
                     ),
                   );
-                }),
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  mainAxisSpacing: 20,
-                  crossAxisSpacing: 20,
-                ),
-              ),
+                } else if (state is CategoryResponseState) {
+                  if (state.response.isLeft()) {
+                    return SliverToBoxAdapter(
+                      child: Center(
+                        child: Text(
+                          state.response.fold((l) => l, (r) => "Error"),
+                          style: TextStyle(color: Colors.red),
+                        ),
+                      ),
+                    );
+                  } else {
+                    categories = state.response.getOrElse(() => []);
+                    return _ListCategory(categories);
+                  }
+                } else {
+                  return SliverToBoxAdapter(
+                    child: Center(child: Text("Unexpected State")),
+                  );
+                }
+              },
             ),
           ],
+        ),
+      ),
+    );
+  }
+}
+
+class _ListCategory extends StatelessWidget {
+  final List<CategoryModel>? categories;
+
+  const _ListCategory(this.categories);
+
+  @override
+  Widget build(BuildContext context) {
+    return SliverPadding(
+      padding: const EdgeInsets.symmetric(horizontal: 44),
+
+      sliver: SliverGrid(
+        delegate: SliverChildBuilderDelegate((context, index) {
+          return CachedImage(imageUrl: categories?[index].thumbnail!);
+        }, childCount: categories?.length ?? 0),
+
+        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 2,
+          mainAxisSpacing: 20,
+          crossAxisSpacing: 20,
         ),
       ),
     );
