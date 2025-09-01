@@ -7,6 +7,7 @@ import 'package:shop/bloc/product/product_bloc.dart';
 import 'package:shop/constants/colors.dart';
 import 'package:shop/data/model/product.dart';
 import 'package:shop/data/model/product_image.dart';
+import 'package:shop/data/model/product_property.dart';
 import 'package:shop/data/model/product_variant.dart';
 import 'package:shop/data/model/variant.dart';
 import 'package:shop/data/model/variant_type.dart';
@@ -26,7 +27,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
   void initState() {
     BlocProvider.of<ProductBloc>(
       context,
-    ).add(ProductInitEvent(widget.product.id));
+    ).add(ProductInitEvent(widget.product.id, widget.product.category));
     super.initState();
   }
 
@@ -45,68 +46,85 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                   ),
                 ],
 
-                SliverToBoxAdapter(
-                  child: Padding(
-                    padding: EdgeInsetsGeometry.only(
-                      left: 44,
-                      right: 44,
-                      bottom: 32,
-                    ),
-                    child: Container(
-                      height: 46,
-                      width: 340,
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(15),
-                        boxShadow: [
-                          /* BoxShadow(
+                if (state is ProductDetailResponseState) ...[
+                  SliverToBoxAdapter(
+                    child: Padding(
+                      padding: EdgeInsetsGeometry.only(
+                        left: 44,
+                        right: 44,
+                        bottom: 32,
+                      ),
+                      child: Container(
+                        height: 46,
+                        width: 340,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(15),
+                          boxShadow: [
+                            /* BoxShadow(
                           // ignore: deprecated_member_use
                           color: Colors.black.withOpacity(0.5),
                           blurRadius: 15,
                           spreadRadius: -5,
                           offset: Offset(0, 15),
                         ), */
-                        ],
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 10),
-                        child: Row(
-                          children: [
-                            Image.asset(
-                              "assets/images/icon_apple_blue.png",
-                              height: 25,
-                              width: 25,
-                            ),
+                          ],
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 10),
+                          child: Row(
+                            children: [
+                              Image.asset(
+                                "assets/images/icon_apple_blue.png",
+                                height: 25,
+                                width: 25,
+                              ),
 
-                            Expanded(
-                              child: Text(
-                                textAlign: TextAlign.center,
-                                "آیفون",
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  color: ColorApplication.blueIndicator,
-                                  fontFamily: "SB",
+                              Expanded(
+                                child: state.productCategory.fold(
+                                  (error) {
+                                    return Text(
+                                      "خطا در دریافت دسته بندی",
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        color: ColorApplication.blueIndicator,
+                                        fontFamily: "SB",
+                                      ),
+                                    );
+                                  },
+                                  (category) {
+                                    return Text(
+                                      textAlign: TextAlign.center,
+                                      category.title ?? "بدون دسته بندی",
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        color: ColorApplication.blueIndicator,
+                                        fontFamily: "SB",
+                                      ),
+                                    );
+                                  },
                                 ),
                               ),
-                            ),
-                            Image.asset(
-                              "assets/images/icon_back.png",
-                              height: 25,
-                              width: 25,
-                            ),
-                            SizedBox(width: 8),
-                          ],
+                              Image.asset(
+                                "assets/images/icon_back.png",
+                                height: 25,
+                                width: 25,
+                              ),
+                              SizedBox(width: 8),
+                            ],
+                          ),
                         ),
                       ),
                     ),
                   ),
-                ),
+                ],
                 SliverPadding(
                   padding: const EdgeInsets.only(bottom: 20),
                   sliver: SliverToBoxAdapter(
                     child: Text(
                       textAlign: TextAlign.center,
-                      "آیفون se 2022",
+                      widget.product.name,
                       style: TextStyle(fontFamily: "SB", fontSize: 16),
                     ),
                   ),
@@ -132,118 +150,17 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                   ),
                 ],
 
-                SliverToBoxAdapter(
-                  child: Container(
-                    height: 46,
-                    width: 340,
-                    margin: EdgeInsets.only(top: 20, left: 44, right: 44),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(15),
-                      border: Border.all(
-                        width: 1,
-                        color: ColorApplication.grey,
-                      ),
-                      boxShadow: [
-                        BoxShadow(
-                          // ignore: deprecated_member_use
-                          color: Colors.black.withOpacity(0.5),
-                          blurRadius: 15,
-
-                          spreadRadius: -5,
-                          offset: Offset(0, 15),
-                        ),
-                      ],
-                    ),
-                    child: Row(
-                      children: [
-                        SizedBox(width: 10),
-                        Image.asset(
-                          width: 20,
-                          height: 20,
-                          "assets/images/icon_left_categroy.png",
-                        ),
-                        SizedBox(width: 10),
-                        Text(
-                          "مشاهده",
-                          style: TextStyle(
-                            fontFamily: "SB",
-                            fontSize: 12,
-                            color: ColorApplication.blueIndicator,
-                          ),
-                        ),
-
-                        Spacer(),
-
-                        Text(
-                          ": مشخصات فنی ",
-                          style: TextStyle(
-                            fontFamily: "SM",
-                            fontSize: 12,
-                            color: Colors.black,
-                          ),
-                        ),
-                        SizedBox(width: 10),
-                      ],
-                    ),
+                if (state is ProductDetailResponseState) ...[
+                  state.productProperties.fold(
+                    (error) {
+                      return SliverToBoxAdapter(child: Text(error));
+                    },
+                    (productPropertiesList) {
+                      return ProductProperties(productPropertiesList);
+                    },
                   ),
-                ),
-                SliverToBoxAdapter(
-                  child: Container(
-                    height: 46,
-                    width: 340,
-                    margin: EdgeInsets.only(top: 20, left: 44, right: 44),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(15),
-                      border: Border.all(
-                        width: 1,
-                        color: ColorApplication.grey,
-                      ),
-                      boxShadow: [
-                        BoxShadow(
-                          // ignore: deprecated_member_use
-                          color: Colors.black.withOpacity(0.5),
-                          blurRadius: 15,
-
-                          spreadRadius: -5,
-                          offset: Offset(0, 15),
-                        ),
-                      ],
-                    ),
-                    child: Row(
-                      children: [
-                        SizedBox(width: 10),
-                        Image.asset(
-                          width: 20,
-                          height: 20,
-                          "assets/images/icon_left_categroy.png",
-                        ),
-                        SizedBox(width: 10),
-                        Text(
-                          "مشاهده",
-                          style: TextStyle(
-                            fontFamily: "SB",
-                            fontSize: 12,
-                            color: ColorApplication.blueIndicator,
-                          ),
-                        ),
-
-                        Spacer(),
-
-                        Text(
-                          ": توضیحات محصول ",
-                          style: TextStyle(
-                            fontFamily: "SM",
-                            fontSize: 12,
-                            color: Colors.black,
-                          ),
-                        ),
-                        SizedBox(width: 10),
-                      ],
-                    ),
-                  ),
-                ),
+                ],
+                ProductDescription(widget.product.description),
                 SliverToBoxAdapter(
                   child: Container(
                     height: 46,
@@ -395,6 +312,211 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
             ),
           );
         },
+      ),
+    );
+  }
+}
+
+class ProductProperties extends StatefulWidget {
+  final List<Property> productProperties;
+  const ProductProperties(this.productProperties, {super.key});
+
+  @override
+  State<ProductProperties> createState() => _ProductPropertiesState();
+}
+
+class _ProductPropertiesState extends State<ProductProperties> {
+  bool invisible = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return SliverToBoxAdapter(
+      child: Column(
+        children: [
+          GestureDetector(
+            onTap: () => setState(() {
+              invisible = !invisible;
+            }),
+            child: Container(
+              height: 46,
+              width: 340,
+              margin: EdgeInsets.only(top: 20, left: 44, right: 44),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(15),
+                border: Border.all(width: 1, color: ColorApplication.grey),
+                boxShadow: [
+                  BoxShadow(
+                    // ignore: deprecated_member_use
+                    color: Colors.black.withOpacity(0.5),
+                    blurRadius: 15,
+
+                    spreadRadius: -5,
+                    offset: Offset(0, 15),
+                  ),
+                ],
+              ),
+              child: Row(
+                children: [
+                  SizedBox(width: 10),
+                  Image.asset(
+                    width: 20,
+                    height: 20,
+                    "assets/images/icon_left_categroy.png",
+                  ),
+                  SizedBox(width: 10),
+                  Text(
+                    "مشاهده",
+                    style: TextStyle(
+                      fontFamily: "SB",
+                      fontSize: 12,
+                      color: ColorApplication.blueIndicator,
+                    ),
+                  ),
+
+                  Spacer(),
+
+                  Text(
+                    ": مشخصات فنی ",
+                    style: TextStyle(
+                      fontFamily: "SM",
+                      fontSize: 12,
+                      color: Colors.black,
+                    ),
+                  ),
+                  SizedBox(width: 10),
+                ],
+              ),
+            ),
+          ),
+          Visibility(
+            visible: invisible,
+            child: Container(
+              height: 200,
+              margin: EdgeInsets.only(top: 20, left: 44, right: 44),
+
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(15),
+                border: Border.all(width: 1, color: ColorApplication.grey),
+              ),
+              child: ListView.builder(
+                itemCount: widget.productProperties.length,
+                itemBuilder: (context, index) {
+                  var property = widget.productProperties[index];
+                  return Row(
+                    children: [Text('${property.title} : ${property.value}')],
+                  );
+                },
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class ProductDescription extends StatefulWidget {
+  final String productDescription;
+  const ProductDescription(this.productDescription, {super.key});
+
+  @override
+  State<ProductDescription> createState() => _ProductDescriptionState();
+}
+
+class _ProductDescriptionState extends State<ProductDescription> {
+  bool invisible = false;
+  @override
+  Widget build(BuildContext context) {
+    return SliverToBoxAdapter(
+      child: Column(
+        children: [
+          GestureDetector(
+            onTap: () => setState(() {
+              invisible = !invisible;
+            }),
+            child: Container(
+              height: 46,
+              width: 340,
+              margin: EdgeInsets.only(top: 20, left: 44, right: 44),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(15),
+                border: Border.all(width: 1, color: ColorApplication.grey),
+                boxShadow: [
+                  BoxShadow(
+                    // ignore: deprecated_member_use
+                    color: Colors.black.withOpacity(0.5),
+                    blurRadius: 15,
+
+                    spreadRadius: -5,
+                    offset: Offset(0, 15),
+                  ),
+                ],
+              ),
+              child: Row(
+                children: [
+                  SizedBox(width: 10),
+                  Image.asset(
+                    width: 20,
+                    height: 20,
+                    "assets/images/icon_left_categroy.png",
+                  ),
+                  SizedBox(width: 10),
+                  Text(
+                    "مشاهده",
+                    style: TextStyle(
+                      fontFamily: "SB",
+                      fontSize: 12,
+                      color: ColorApplication.blueIndicator,
+                    ),
+                  ),
+
+                  Spacer(),
+
+                  Text(
+                    ": توضیحات محصول ",
+                    style: TextStyle(
+                      fontFamily: "SM",
+                      fontSize: 12,
+                      color: Colors.black,
+                    ),
+                  ),
+                  SizedBox(width: 10),
+                ],
+              ),
+            ),
+          ),
+          Visibility(
+            visible: invisible,
+            child: Container(
+              width: 340,
+              margin: EdgeInsets.only(top: 20, left: 44, right: 44),
+              padding: EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(15),
+                border: Border.all(width: 1, color: ColorApplication.grey),
+                boxShadow: [
+                  BoxShadow(
+                    // ignore: deprecated_member_use
+                    color: Colors.black.withOpacity(0.5),
+                    blurRadius: 15,
+
+                    spreadRadius: -5,
+                    offset: Offset(0, 15),
+                  ),
+                ],
+              ),
+              child: Text(
+                textAlign: TextAlign.right,
+                style: TextStyle(fontFamily: "SM", fontSize: 15, height: 2),
+                widget.productDescription,
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

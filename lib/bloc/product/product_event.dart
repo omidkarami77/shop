@@ -5,5 +5,6 @@ sealed class ProductEvent {}
 
 class ProductInitEvent extends ProductEvent {
   final String productId;
-  ProductInitEvent(this.productId);
+  final String categoryId;
+  ProductInitEvent(this.productId, this.categoryId);
 }

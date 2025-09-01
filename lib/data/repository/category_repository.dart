@@ -2,6 +2,7 @@ import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
 import 'package:shop/data/datasource/category_datasource.dart';
 import 'package:shop/data/model/category.dart';
+
 import 'package:shop/dr.dart';
 import 'package:shop/util/api_exception.dart';
 
@@ -15,7 +16,7 @@ class CategoryRepository implements ICategoryRepository {
   @override
   Future<Either<String, List<CategoryModel>>> getCategories() async {
     try {
-      final categories = await _datasource.getCategories();
+      final categories = await _datasource.getProductByCategory();
       return right(categories);
     } on DioException catch (e) {
       throw ApiException(

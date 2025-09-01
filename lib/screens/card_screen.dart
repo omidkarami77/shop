@@ -2,6 +2,7 @@ import 'package:dotted_line/dotted_line.dart';
 import 'package:flutter/material.dart';
 
 import 'package:shop/constants/colors.dart';
+import 'package:shop/util/extentions/string_extentions.dart';
 
 class CardScreen extends StatelessWidget {
   const CardScreen({super.key});
@@ -212,13 +213,35 @@ class CardItem extends StatelessWidget {
                             ),
                           ],
                         ),
+
+                        SizedBox(height: 10),
                         Wrap(
+                          spacing: 8,
                           children: [
-                            OptionsChip(),
-                            SizedBox(width: 10),
-                            OptionsChip(),
-                            SizedBox(width: 10),
-                            OptionsChip(),
+                            Container(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10),
+                                border: Border.all(color: Colors.red, width: 1),
+                              ),
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 4,
+                                  vertical: 2,
+                                ),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Image.asset("assets/images/icon_trash.png"),
+                                    SizedBox(width: 8),
+                                    Text(
+                                      "حذف",
+                                      style: TextStyle(color: Colors.red),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                            OptionsChip(title: "امید کرمی", color: '4287f5'),
                           ],
                         ),
                       ],
@@ -262,7 +285,9 @@ class CardItem extends StatelessWidget {
 }
 
 class OptionsChip extends StatelessWidget {
-  const OptionsChip({super.key});
+  final String? color;
+  final String title;
+  const OptionsChip({super.key, required this.color, required this.title});
 
   @override
   Widget build(BuildContext context) {
@@ -276,9 +301,21 @@ class OptionsChip extends StatelessWidget {
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Image.asset("assets/images/icon_options.png"),
             SizedBox(width: 10),
-            Text("1111"),
+            if (color!.isNotEmpty) ...[
+              Container(
+                width: 12,
+                height: 12,
+                margin: EdgeInsets.only(right: 8),
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+
+                  color: color!.parseToColor(),
+                ),
+              ),
+            ],
+
+            Text(title),
           ],
         ),
       ),
