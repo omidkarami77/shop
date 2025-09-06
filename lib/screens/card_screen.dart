@@ -1,14 +1,18 @@
 import 'package:dotted_line/dotted_line.dart';
 import 'package:flutter/material.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 
 import 'package:shop/constants/colors.dart';
+import 'package:shop/data/model/basket_item.dart';
 import 'package:shop/util/extentions/string_extentions.dart';
+import 'package:shop/widgets/catched_image.dart';
 
 class CardScreen extends StatelessWidget {
   const CardScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    var box = Hive.box<BasketItem>('basket_items');
     return SafeArea(
       child: Stack(
         alignment: Alignment.bottomCenter,
@@ -68,8 +72,8 @@ class CardScreen extends StatelessWidget {
               ),
               SliverList(
                 delegate: SliverChildBuilderDelegate((context, index) {
-                  return CardItem();
-                }, childCount: 10),
+                  return CardItem(box.values.toList()[index]);
+                }, childCount: box.values.length),
               ),
               SliverPadding(padding: EdgeInsets.only(bottom: 50)),
             ],
@@ -109,7 +113,8 @@ class CardScreen extends StatelessWidget {
 }
 
 class CardItem extends StatelessWidget {
-  const CardItem({super.key});
+  final BasketItem basketItem;
+  const CardItem(this.basketItem, {super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -251,7 +256,11 @@ class CardItem extends StatelessWidget {
 
                 Padding(
                   padding: const EdgeInsets.only(right: 10),
-                  child: Image.asset("assets/images/iphone.png"),
+                  child: SizedBox(
+                    height: 104,
+                    width: 75,
+                    child: CachedImage(imageUrl: basketItem.thumbnail),
+                  ),
                 ),
               ],
             ),

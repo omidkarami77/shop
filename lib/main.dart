@@ -1,12 +1,14 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:hive_flutter/adapters.dart';
 import 'package:shop/bloc/authentication/auth_bloc.dart';
 import 'package:shop/bloc/home/home_bloc.dart';
 import 'package:shop/bloc/category/bloc/category_bloc.dart';
 import 'package:shop/constants/colors.dart';
+import 'package:shop/data/model/basket_item.dart';
 import 'package:shop/dr.dart';
-import 'package:shop/screens/card_screen.dart';
+import 'package:shop/screens/card_screen.dart' hide CardItem;
 import 'package:shop/screens/category_screen.dart';
 import 'package:shop/screens/home_screen.dart';
 import 'package:shop/screens/login_screen.dart';
@@ -14,6 +16,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await Hive.initFlutter();
+  Hive.registerAdapter(BasketItemAdapter());
+  await Hive.openBox<BasketItem>('basket_items');
+
   // Initialize dependency injection
   await getItInit();
   runApp(const MyApp());

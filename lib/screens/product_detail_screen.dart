@@ -3,8 +3,10 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
+
 import 'package:shop/bloc/product/product_bloc.dart';
 import 'package:shop/constants/colors.dart';
+
 import 'package:shop/data/model/product.dart';
 import 'package:shop/data/model/product_image.dart';
 import 'package:shop/data/model/product_property.dart';
@@ -23,12 +25,17 @@ class ProductDetailScreen extends StatefulWidget {
 }
 
 class _ProductDetailScreenState extends State<ProductDetailScreen> {
+  bool _isInit = false;
+
   @override
-  void initState() {
-    BlocProvider.of<ProductBloc>(
-      context,
-    ).add(ProductInitEvent(widget.product.id, widget.product.category));
-    super.initState();
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (!_isInit) {
+      BlocProvider.of<ProductBloc>(
+        context,
+      ).add(ProductInitEvent(widget.product.id, widget.product.category));
+      _isInit = true;
+    }
   }
 
   @override
@@ -303,7 +310,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                         PriceTagButton(),
                         SizedBox(width: 20),
 
-                        AddToBasketButton(),
+                        AddToBasketButton(widget.product),
                       ],
                     ),
                   ),
@@ -815,7 +822,8 @@ class _GalleryWidgetState extends State<GalleryWidget> {
 }
 
 class AddToBasketButton extends StatefulWidget {
-  const AddToBasketButton({super.key});
+  final Product product;
+  const AddToBasketButton(this.product, {super.key});
 
   @override
   State<AddToBasketButton> createState() => _AddToBasketButtonState();
@@ -854,16 +862,25 @@ class _AddToBasketButtonState extends State<AddToBasketButton> {
                 filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
                 child: Container(color: Colors.white.withValues(alpha: 0.2)),
               ),
-              Container(
-                height: 53,
-                width: 160,
-                alignment: Alignment.center,
-                child: Text(
-                  "افزودن به سبد خرید",
-                  style: TextStyle(
-                    fontFamily: "SB",
-                    fontSize: 14,
-                    color: Colors.white,
+              GestureDetector(
+                onTap: () {
+                  // Add to basket action
+
+                  context.read<ProductBloc>().add(
+                    ProductAddedToBasket(widget.product),
+                  );
+                },
+                child: Container(
+                  height: 53,
+                  width: 160,
+                  alignment: Alignment.center,
+                  child: Text(
+                    "افزودن به سبد خرید",
+                    style: TextStyle(
+                      fontFamily: "SB",
+                      fontSize: 14,
+                      color: Colors.white,
+                    ),
                   ),
                 ),
               ),

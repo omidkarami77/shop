@@ -8,3 +8,8 @@ class ProductInitEvent extends ProductEvent {
   final String categoryId;
   ProductInitEvent(this.productId, this.categoryId);
 }
+
+class ProductAddedToBasket extends ProductEvent {
+  final Product product;
+  ProductAddedToBasket(this.product);
+}
