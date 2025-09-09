@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 
 import 'package:get_it/get_it.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:shop/bloc/basket/bloc/basket_bloc.dart';
 import 'package:shop/data/datasource/authentication_datasource.dart';
 import 'package:shop/data/datasource/banner_datasource.dart';
 import 'package:shop/data/datasource/basket_datasource.dart';
@@ -63,4 +64,5 @@ Future<void> getItInit() async {
   locator.registerFactory<IBasketDataSource>(() => BasketLocalDataSource());
 
   locator.registerFactory<IBasketRepository>(() => BasketRepository());
+  locator.registerSingleton<BasketBloc>(BasketBloc());
 }

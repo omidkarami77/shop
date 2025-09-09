@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:shop/bloc/basket/bloc/basket_bloc.dart';
 
 import 'package:shop/bloc/product/product_bloc.dart';
 import 'package:shop/constants/colors.dart';
@@ -25,7 +26,7 @@ class ProductDetailScreen extends StatefulWidget {
 }
 
 class _ProductDetailScreenState extends State<ProductDetailScreen> {
-  bool _isInit = false;
+  /*  bool _isInit = false;
 
   @override
   void didChangeDependencies() {
@@ -37,6 +38,24 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
       _isInit = true;
     }
   }
+*/
+  @override
+  Widget build(BuildContext context) {
+    return BlocProvider(
+      create: (context) {
+        var bloc = ProductBloc();
+        bloc.add(ProductInitEvent(widget.product.id, widget.product.category));
+        return bloc;
+      },
+      child: DetailContentWidget(widget: widget),
+    );
+  }
+}
+
+class DetailContentWidget extends StatelessWidget {
+  const DetailContentWidget({super.key, required this.widget});
+
+  final ProductDetailScreen widget;
 
   @override
   Widget build(BuildContext context) {
@@ -869,6 +888,7 @@ class _AddToBasketButtonState extends State<AddToBasketButton> {
                   context.read<ProductBloc>().add(
                     ProductAddedToBasket(widget.product),
                   );
+                  context.read<BasketBloc>().add(BasketFetchFromHiveEvent());
                 },
                 child: Container(
                   height: 53,

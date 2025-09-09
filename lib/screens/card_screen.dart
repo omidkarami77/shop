@@ -1,112 +1,188 @@
 import 'package:dotted_line/dotted_line.dart';
 import 'package:flutter/material.dart';
-import 'package:hive_flutter/hive_flutter.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+
+import 'package:shop/bloc/basket/bloc/basket_bloc.dart';
 
 import 'package:shop/constants/colors.dart';
 import 'package:shop/data/model/basket_item.dart';
 import 'package:shop/util/extentions/string_extentions.dart';
 import 'package:shop/widgets/catched_image.dart';
+import 'package:url_launcher/url_launcher.dart';
 
-class CardScreen extends StatelessWidget {
+import 'package:app_links/app_links.dart';
+import 'package:zarinpal/zarinpal.dart';
+
+class CardScreen extends StatefulWidget {
   const CardScreen({super.key});
 
   @override
+  State<CardScreen> createState() => _CardScreenState();
+}
+
+class _CardScreenState extends State<CardScreen> {
+  PaymentRequest paymentRequest = PaymentRequest();
+
+  @override
+  void initState() {
+    super.initState();
+
+    paymentRequest.setIsSandBox(true);
+    paymentRequest.setAmount(100000);
+    paymentRequest.setDescription("خرید محصول از فروشگاه اپل");
+    paymentRequest.setCallbackURL("expertflutter://shop");
+
+    final appLinks = AppLinks();
+    appLinks.stringLinkStream.listen((String? link) {
+      if (link != null && link.contains('expertflutter://shop')) {
+        Uri uri = Uri.parse(link);
+        String? status = uri.queryParameters['status'];
+        String? authority = uri.queryParameters['authority'];
+
+        if (status == '100') {
+        } else {}
+      }
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
-    var box = Hive.box<BasketItem>('basket_items');
     return SafeArea(
-      child: Stack(
-        alignment: Alignment.bottomCenter,
-        children: [
-          CustomScrollView(
-            slivers: [
-              SliverToBoxAdapter(
-                child: Padding(
-                  padding: EdgeInsetsGeometry.only(
+      child: BlocBuilder<BasketBloc, BasketState>(
+        builder: (context, state) {
+          return Stack(
+            alignment: Alignment.bottomCenter,
+            children: [
+              CustomScrollView(
+                slivers: [
+                  SliverToBoxAdapter(
+                    child: Padding(
+                      padding: EdgeInsetsGeometry.only(
+                        left: 44,
+                        right: 44,
+                        bottom: 32,
+                      ),
+                      child: Container(
+                        height: 46,
+                        width: 340,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(15),
+                          boxShadow: [
+                            BoxShadow(
+                              // ignore: deprecated_member_use
+                              color: Colors.black.withOpacity(0.5),
+                              blurRadius: 15,
+                              spreadRadius: -5,
+                              offset: Offset(0, 15),
+                            ),
+                          ],
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 10),
+                          child: Row(
+                            children: [
+                              Image.asset(
+                                "assets/images/icon_apple_blue.png",
+                                height: 25,
+                                width: 25,
+                              ),
+
+                              Expanded(
+                                child: Text(
+                                  textAlign: TextAlign.center,
+                                  "سبد خرید",
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    color: ColorApplication.blueIndicator,
+                                    fontFamily: "SB",
+                                  ),
+                                ),
+                              ),
+                              SizedBox(width: 8),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  if (state is BasketDataFetchedState) ...[
+                    state.items.fold(
+                      (l) => SliverToBoxAdapter(
+                        child: Center(child: Text("خطا در بارگذاری اطلاعات")),
+                      ),
+                      (basketItemList) {
+                        return SliverList(
+                          delegate: SliverChildBuilderDelegate((
+                            context,
+                            index,
+                          ) {
+                            return CardItem(basketItemList[index]);
+                          }, childCount: basketItemList.length),
+                        );
+                      },
+                    ),
+                  ] else ...[
+                    SliverToBoxAdapter(
+                      child: Center(child: CircularProgressIndicator()),
+                    ),
+                  ],
+                  SliverPadding(padding: EdgeInsets.only(bottom: 50)),
+                ],
+              ),
+              if (state is BasketDataFetchedState) ...[
+                Padding(
+                  padding: const EdgeInsets.only(
                     left: 44,
                     right: 44,
-                    bottom: 32,
+                    bottom: 20,
                   ),
-                  child: Container(
-                    height: 46,
-                    width: 340,
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(15),
-                      boxShadow: [
-                        BoxShadow(
-                          // ignore: deprecated_member_use
-                          color: Colors.black.withOpacity(0.5),
-                          blurRadius: 15,
-                          spreadRadius: -5,
-                          offset: Offset(0, 15),
-                        ),
-                      ],
+                  child: ElevatedButton(
+                    onPressed: () async {
+                      ZarinPal().startPayment(paymentRequest, (
+                        int? status,
+                        String? paymentGateWayUri,
+                        Map<String, dynamic>? data,
+                      ) {
+                        if (status == 100 && paymentGateWayUri != null) {
+                          launchUrl(
+                            Uri.parse(paymentGateWayUri),
+                            mode: LaunchMode.externalApplication,
+                          );
+                        } else {}
+                      });
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor:
+                          ColorApplication.green, // رنگ پس‌زمینه دکمه
+                      minimumSize: Size(
+                        MediaQuery.of(context).size.width,
+                        53,
+                      ), // عرض و ارتفاع دکمه
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 20,
+                        vertical: 12,
+                      ), // فاصله داخلی
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(
+                          15,
+                        ), // گرد کردن گوشه‌ها
+                      ),
                     ),
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 10),
-                      child: Row(
-                        children: [
-                          Image.asset(
-                            "assets/images/icon_apple_blue.png",
-                            height: 25,
-                            width: 25,
-                          ),
-
-                          Expanded(
-                            child: Text(
-                              textAlign: TextAlign.center,
-                              "سبد خرید",
-                              style: TextStyle(
-                                fontSize: 16,
-                                color: ColorApplication.blueIndicator,
-                                fontFamily: "SB",
-                              ),
-                            ),
-                          ),
-                          SizedBox(width: 8),
-                        ],
+                    child: Text(
+                      "${state.basketFinalPrice} تومان پرداخت",
+                      style: TextStyle(
+                        fontFamily: "SB",
+                        fontSize: 16,
+                        color: Colors.white,
                       ),
                     ),
                   ),
                 ),
-              ),
-              SliverList(
-                delegate: SliverChildBuilderDelegate((context, index) {
-                  return CardItem(box.values.toList()[index]);
-                }, childCount: box.values.length),
-              ),
-              SliverPadding(padding: EdgeInsets.only(bottom: 50)),
+              ],
             ],
-          ),
-          Padding(
-            padding: const EdgeInsets.only(left: 44, right: 44, bottom: 20),
-            child: ElevatedButton(
-              onPressed: () {},
-              style: ElevatedButton.styleFrom(
-                backgroundColor: ColorApplication.green, // رنگ پس‌زمینه دکمه
-                minimumSize: Size(
-                  MediaQuery.of(context).size.width,
-                  53,
-                ), // عرض و ارتفاع دکمه
-                padding: EdgeInsets.symmetric(
-                  horizontal: 20,
-                  vertical: 12,
-                ), // فاصله داخلی
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(15), // گرد کردن گوشه‌ها
-                ),
-              ),
-              child: Text(
-                "ادامه فرآیند خرید",
-                style: TextStyle(
-                  fontFamily: "SB",
-                  fontSize: 16,
-                  color: Colors.white,
-                ),
-              ),
-            ),
-          ),
-        ],
+          );
+        },
       ),
     );
   }
@@ -157,7 +233,7 @@ class CardItem extends StatelessWidget {
                                 .ellipsis, // اینجا سه نقطه فعال میشه
 
                             textAlign: TextAlign.right,
-                            "آیفون 13 پرو مکس دو سیم کارت",
+                            basketItem.name,
                             style: TextStyle(
                               fontFamily: "SB",
                               fontSize: 16,
@@ -281,7 +357,9 @@ class CardItem extends StatelessWidget {
                 Text("تومان", style: TextStyle(fontFamily: "SM", fontSize: 12)),
                 SizedBox(width: 5),
                 Text(
-                  "45,350,000",
+                  basketItem.realPrice == 0
+                      ? "محصولی در سبد وجود ندارد"
+                      : basketItem.realPrice.toString(),
                   style: TextStyle(fontFamily: "SM", fontSize: 16),
                 ),
               ],

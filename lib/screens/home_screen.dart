@@ -8,6 +8,7 @@ import 'package:shop/data/model/product.dart';
 import 'package:shop/widgets/banner_slider.dart';
 import 'package:shop/widgets/category_icon_item_chip.dart';
 import 'package:shop/widgets/product_item.dart';
+import 'package:loading_indicator/loading_indicator.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -18,12 +19,6 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   @override
-  void initState() {
-    BlocProvider.of<HomeBloc>(context).add(HomeGetInitializeData());
-    super.initState();
-  }
-
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: ColorApplication.backgroundScreenColor,
@@ -31,88 +26,111 @@ class _HomeScreenState extends State<HomeScreen> {
       body: SafeArea(
         child: BlocBuilder<HomeBloc, HomeState>(
           builder: (context, state) {
-            return CustomScrollView(
-              slivers: [
-                if (state is HomeLoadingState) ...[
-                  SliverToBoxAdapter(
-                    child: Center(child: CircularProgressIndicator()),
-                  ),
-                ],
+            return RefreshIndicator(
+              onRefresh: () async {
+                BlocProvider.of<HomeBloc>(context).add(HomeGetInitializeData());
+              },
+              child: CustomScrollView(
+                slivers: [
+                  if (state is HomeLoadingState) ...[
+                    LoadingAnimation(),
+                  ] else ...[
+                    _GetSearchBox(),
 
-                _GetSearchBox(),
-
-                if (state is HomeRequestSuccessState) ...[
-                  state.response.fold(
-                    (error) => SliverToBoxAdapter(
-                      child: Center(
-                        child: Text(
-                          'Error: $error',
-                          style: TextStyle(color: Colors.red),
+                    if (state is HomeRequestSuccessState) ...[
+                      state.response.fold(
+                        (error) => SliverToBoxAdapter(
+                          child: Center(
+                            child: Text(
+                              'Error: $error',
+                              style: TextStyle(color: Colors.red),
+                            ),
+                          ),
                         ),
+                        (banners) {
+                          return _GetBanners(banners);
+                        },
                       ),
-                    ),
-                    (banners) {
-                      return _GetBanners(banners);
-                    },
-                  ),
-                ],
+                    ],
 
-                _GetCategoryListTitle(),
+                    _GetCategoryListTitle(),
 
-                if (state is HomeRequestSuccessState) ...[
-                  state.category.fold(
-                    (error) => SliverToBoxAdapter(
-                      child: Center(
-                        child: Text(
-                          'Error: $error',
-                          style: TextStyle(color: Colors.red),
+                    if (state is HomeRequestSuccessState) ...[
+                      state.category.fold(
+                        (error) => SliverToBoxAdapter(
+                          child: Center(
+                            child: Text(
+                              'Error: $error',
+                              style: TextStyle(color: Colors.red),
+                            ),
+                          ),
                         ),
+                        (categories) {
+                          return _GetCategoryList(categories);
+                        },
                       ),
-                    ),
-                    (categories) {
-                      return _GetCategoryList(categories);
-                    },
-                  ),
-                ],
+                    ],
 
-                _GetBestSellerTitle(),
+                    _GetBestSellerTitle(),
 
-                if (state is HomeRequestSuccessState) ...[
-                  state.bestSellerProductList.fold(
-                    (error) => SliverToBoxAdapter(
-                      child: Center(
-                        child: Text(
-                          'Error: $error',
-                          style: TextStyle(color: Colors.red),
+                    if (state is HomeRequestSuccessState) ...[
+                      state.bestSellerProductList.fold(
+                        (error) => SliverToBoxAdapter(
+                          child: Center(
+                            child: Text(
+                              'Error: $error',
+                              style: TextStyle(color: Colors.red),
+                            ),
+                          ),
                         ),
+                        (bestProduct) {
+                          return _GetBestSellerProduct(bestProduct);
+                        },
                       ),
-                    ),
-                    (bestProduct) {
-                      return _GetBestSellerProduct(bestProduct);
-                    },
-                  ),
-                ],
+                    ],
 
-                _GetMostViewedTitle(),
+                    _GetMostViewedTitle(),
 
-                if (state is HomeRequestSuccessState) ...[
-                  state.hottestProductList.fold(
-                    (error) => SliverToBoxAdapter(
-                      child: Center(
-                        child: Text(
-                          'Error: $error',
-                          style: TextStyle(color: Colors.red),
+                    if (state is HomeRequestSuccessState) ...[
+                      state.hottestProductList.fold(
+                        (error) => SliverToBoxAdapter(
+                          child: Center(
+                            child: Text(
+                              'Error: $error',
+                              style: TextStyle(color: Colors.red),
+                            ),
+                          ),
                         ),
+                        (bestProduct) {
+                          return _GetMostViewedProduct(bestProduct);
+                        },
                       ),
-                    ),
-                    (bestProduct) {
-                      return _GetMostViewedProduct(bestProduct);
-                    },
-                  ),
+                    ],
+                  ],
                 ],
-              ],
+              ),
             );
           },
+        ),
+      ),
+    );
+  }
+}
+
+class LoadingAnimation extends StatelessWidget {
+  const LoadingAnimation({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return SliverFillRemaining(
+      hasScrollBody: false,
+      child: Center(
+        child: LoadingIndicator(
+          indicatorType: Indicator.ballSpinFadeLoader,
+          colors: const [Colors.red],
+          strokeWidth: 2,
+          backgroundColor: Colors.transparent,
+          pathBackgroundColor: Colors.white,
         ),
       ),
     );

@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:shop/bloc/product/product_bloc.dart';
+import 'package:shop/bloc/basket/bloc/basket_bloc.dart';
+
 import 'package:shop/constants/colors.dart';
 import 'package:shop/data/model/product.dart';
+import 'package:shop/dr.dart';
 import 'package:shop/screens/product_detail_screen.dart';
 import 'package:shop/widgets/catched_image.dart';
 
@@ -16,8 +18,8 @@ class ProductItem extends StatelessWidget {
       onTap: () {
         Navigator.of(context).push(
           MaterialPageRoute(
-            builder: (context) => BlocProvider(
-              create: (context) => ProductBloc(),
+            builder: (context) => BlocProvider<BasketBloc>.value(
+              value: locator.get<BasketBloc>(),
               child: ProductDetailScreen(product: product),
             ),
           ),
