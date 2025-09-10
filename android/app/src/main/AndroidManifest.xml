@@ -32,7 +32,7 @@
     <category android:name="android.intent.category.BROWSABLE" />
     <!-- Add optional android:host to distinguish your app
           from others in case of conflicting scheme name -->
-    <data android:scheme="sample" android:host="open.my.app" />
+    <data android:scheme="expertflutter" android:host="shop" />
     <!-- <data android:scheme="sample" /> -->
 </intent-filter>
 

@@ -8,6 +8,7 @@ import 'package:shop/data/datasource/banner_datasource.dart';
 import 'package:shop/data/datasource/basket_datasource.dart';
 import 'package:shop/data/datasource/category_datasource.dart';
 import 'package:shop/data/datasource/category_product_datasource.dart';
+import 'package:shop/data/datasource/comment_datasource.dart';
 import 'package:shop/data/datasource/product_datasource.dart';
 import 'package:shop/data/datasource/product_detail_datasource.dart';
 import 'package:shop/data/repository/banner_repository.dart';
@@ -15,6 +16,7 @@ import 'package:shop/data/repository/authentication_repository.dart';
 import 'package:shop/data/repository/basket_repository.dart';
 import 'package:shop/data/repository/category_product_repository.dart';
 import 'package:shop/data/repository/category_repository.dart';
+import 'package:shop/data/repository/comment_repository.dart';
 import 'package:shop/data/repository/product_detail_repository.dart';
 import 'package:shop/data/repository/product_repository.dart';
 
@@ -65,4 +67,7 @@ Future<void> getItInit() async {
 
   locator.registerFactory<IBasketRepository>(() => BasketRepository());
   locator.registerSingleton<BasketBloc>(BasketBloc());
+
+  locator.registerFactory<ICommentDataSource>(() => CommentDatasource());
+  locator.registerFactory<ICommentRepository>(() => CommentRepository());
 }

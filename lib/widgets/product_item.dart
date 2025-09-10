@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
 import 'package:shop/bloc/basket/bloc/basket_bloc.dart';
 
 import 'package:shop/constants/colors.dart';
 import 'package:shop/data/model/product.dart';
 import 'package:shop/dr.dart';
 import 'package:shop/screens/product_detail_screen.dart';
+import 'package:shop/util/extentions/double_extention.dart';
+
 import 'package:shop/widgets/catched_image.dart';
 
 class ProductItem extends StatelessWidget {
@@ -136,7 +139,7 @@ class ProductItem extends StatelessWidget {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Text(
-                              product.realPrice.toString(),
+                              product.realPrice!.convertToPrice(),
                               style: TextStyle(
                                 decoration: TextDecoration.lineThrough,
                                 decorationColor: Colors.white,
@@ -147,7 +150,7 @@ class ProductItem extends StatelessWidget {
                               ),
                             ),
                             Text(
-                              product.price.toString(),
+                              product.price.convertToPrice(),
                               style: TextStyle(
                                 fontFamily: "SM",
                                 fontSize: 16,
