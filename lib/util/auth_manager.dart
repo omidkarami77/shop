@@ -12,7 +12,18 @@ class AuthManager {
     authChangeNotifire.value = token;
   }
 
-  static String? readAuth() {
+  static void saveId(String id) async {
+    // Logic to save the token securely
+    _sharedPreferences.setString('user_id', id);
+    authChangeNotifire.value = id;
+  }
+
+  static String getId() {
+    // Logic to retrieve the token securely
+    return _sharedPreferences.getString('user_id') ?? '';
+  }
+
+  static String readAuth() {
     // Logic to retrieve the token securely
     return _sharedPreferences.getString('access_token') ?? '';
   }
@@ -24,11 +35,7 @@ class AuthManager {
   }
 
   static bool isLogin() {
-    String? token = readAuth();
-    if (token == null || token.isEmpty) {
-      return false;
-    } else {
-      return true;
-    }
+    String token = readAuth();
+    return token.isNotEmpty;
   }
 }

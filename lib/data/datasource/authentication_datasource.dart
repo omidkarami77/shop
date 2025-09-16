@@ -1,5 +1,7 @@
 import 'package:dio/dio.dart';
-import 'package:shop/dr.dart';
+import 'package:shop/util/auth_manager.dart';
+
+import 'package:shop/util/dio_provider.dart';
 import 'package:shop/util/api_exception.dart';
 
 abstract class IAuthenticationRemote {
@@ -13,7 +15,7 @@ abstract class IAuthenticationRemote {
 }
 
 class AuthenticationRemote implements IAuthenticationRemote {
-  final Dio _dio = locator.get();
+  final Dio _loginDio = DioProvider.createLoginDioWithoutHeader();
   @override
   Future<void> register(
     String username,
@@ -21,7 +23,7 @@ class AuthenticationRemote implements IAuthenticationRemote {
     String passwordConfirm,
   ) async {
     try {
-      await _dio.post(
+      await _loginDio.post(
         'api/collections/users/records',
         data: {
           'username': username,
@@ -42,17 +44,15 @@ class AuthenticationRemote implements IAuthenticationRemote {
   @override
   Future<String> login(String username, String password) async {
     try {
-      final response = await _dio.post(
+      final response = await _loginDio.post(
         'api/collections/users/auth-with-password',
         data: {'identity': username, 'password': password},
       );
+
       if (response.statusCode == 200) {
-        return response.data['token'];
-      } else {
-        throw ApiException(
-          code: response.statusCode,
-          message: 'Login failed with status: ${response.statusCode}',
-        );
+        AuthManager.saveId(response.data['record']['id']);
+        var token = response.data['token'];
+        return token;
       }
     } on DioException catch (e) {
       throw ApiException(
@@ -62,5 +62,6 @@ class AuthenticationRemote implements IAuthenticationRemote {
     } catch (e) {
       throw ApiException(message: 'An unexpected error occurred');
     }
+    return '';
   }
 }

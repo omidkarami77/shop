@@ -12,3 +12,13 @@ final class CommentRequestSuccessState extends CommentState {
 
   CommentRequestSuccessState(this.response);
 }
+
+class CommentPostLoading extends CommentState {
+  final bool isLoading;
+  CommentPostLoading([this.isLoading = false]);
+}
+
+class CommentPostResponse extends CommentState {
+  final Either<String, void> response;
+  CommentPostResponse(this.response);
+}

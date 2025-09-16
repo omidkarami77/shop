@@ -1,5 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:shop/bloc/authentication/auth_bloc.dart';
 import 'package:shop/constants/colors.dart';
+import 'package:shop/main.dart';
+import 'package:shop/screens/dashbord_screen.dart';
+import 'package:shop/screens/login_screen.dart';
+import 'package:shop/util/auth_manager.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -54,6 +60,55 @@ class ProfileScreen extends StatelessWidget {
                 ),
               ),
             ),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              AuthManager.lougout();
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) {
+                    return BlocProvider(
+                      create: (context) {
+                        var authBloc = AuthBloc();
+                        authBloc.stream.forEach((state) {
+                          if (state is AuthResponseState) {
+                            state.response.fold(
+                              (error) {
+                                // Show error message
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text(
+                                      error,
+                                      style: TextStyle(
+                                        fontFamily: "SM",
+                                        fontSize: 16,
+                                      ),
+                                    ),
+                                    backgroundColor: Colors.red,
+                                  ),
+                                );
+                              },
+                              (success) {
+                                globalNavigationKey.currentState
+                                    ?.pushReplacement(
+                                      MaterialPageRoute(
+                                        builder: (context) => DashBoordScreen(),
+                                      ),
+                                    );
+                              },
+                            );
+                          }
+                        });
+
+                        return authBloc;
+                      },
+                      child: LoginScreen(),
+                    );
+                  },
+                ),
+              );
+            },
+            child: Text("خروج"),
           ),
           Text(
             "امید کرمی",

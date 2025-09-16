@@ -17,5 +17,17 @@ class CommentBloc extends Bloc<CommentEvent, CommentState> {
       final response = await commentRepository.getComments(event.productId);
       emit(CommentRequestSuccessState(response));
     });
+
+    on<CommentPostEvent>((event, emit) async {
+      emit(CommentPostLoading(true));
+
+      final response = await commentRepository.postComment(
+        event.productId,
+        event.comment,
+      );
+      emit(CommentPostLoading(false));
+
+      emit(CommentPostResponse(response));
+    });
   }
 }

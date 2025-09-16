@@ -14,6 +14,7 @@ class LoginScreen extends StatelessWidget {
     TextEditingController passwordController = TextEditingController(
       text: '12345678',
     );
+
     return Directionality(
       textDirection: TextDirection.rtl,
       child: Scaffold(

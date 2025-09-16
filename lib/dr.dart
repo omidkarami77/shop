@@ -19,17 +19,16 @@ import 'package:shop/data/repository/category_repository.dart';
 import 'package:shop/data/repository/comment_repository.dart';
 import 'package:shop/data/repository/product_detail_repository.dart';
 import 'package:shop/data/repository/product_repository.dart';
+import 'package:shop/util/dio_provider.dart';
 
 var locator = GetIt.instance;
 
 Future<void> getItInit() async {
-  locator.registerSingleton<Dio>(
-    Dio(BaseOptions(baseUrl: 'https://startflutter.ir/')),
-  );
-
   locator.registerSingleton<SharedPreferences>(
     await SharedPreferences.getInstance(),
   );
+  locator.registerSingleton<Dio>(DioProvider.createDio());
+
   locator.registerFactory<IAuthenticationRemote>(() => AuthenticationRemote());
   locator.registerFactory<IAuthenticationRepository>(
     () => AuthenticationRepository(),

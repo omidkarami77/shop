@@ -202,7 +202,17 @@ class DetailScreenContent extends StatelessWidget {
                               );
                               return bloc;
                             },
-                            child: CommentBottomSheet(),
+                            child: DraggableScrollableSheet(
+                              initialChildSize: 0.1,
+                              minChildSize: 0.1,
+                              maxChildSize: 0.3,
+                              builder: (context, scrollController) {
+                                return CommentBottomSheet(
+                                  scrollController,
+                                  widget.product.id,
+                                );
+                              },
+                            ),
                           );
                         },
                       );
@@ -364,7 +374,10 @@ class DetailScreenContent extends StatelessWidget {
 }
 
 class CommentBottomSheet extends StatelessWidget {
-  const CommentBottomSheet({super.key});
+  final String productId;
+  final TextEditingController _commentController = TextEditingController();
+  final ScrollController scrollController;
+  CommentBottomSheet(this.scrollController, this.productId, {super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -379,14 +392,143 @@ class CommentBottomSheet extends StatelessWidget {
             if (comments.isEmpty) {
               return Center(child: Text("هیچ نظری ثبت نشده است."));
             }
-            return Center(
-              child: ListView.builder(
-                itemCount: comments.length,
-                itemBuilder: (context, index) {
-                  var comment = comments[index];
-                  return ListTile(subtitle: Text(comment.text));
-                },
-              ),
+            return Column(
+              children: [
+                Expanded(
+                  child: ListView.builder(
+                    itemCount: comments.length,
+                    itemBuilder: (context, index) {
+                      var comment = comments[index];
+                      return ListTile(
+                        title: Text(comment.username),
+                        subtitle: Text(comment.text),
+                        leading: SizedBox(
+                          width: 32,
+                          height: 32,
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(16),
+                            child: comments[index].avatar.isNotEmpty
+                                ? CachedImage(imageUrl: comment.avatar)
+                                : Image.asset("assets/images/avatar.png"),
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+
+                SafeArea(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                    child: Directionality(
+                      textDirection: TextDirection.rtl,
+                      child: Column(
+                        children: [
+                          TextField(
+                            controller: _commentController,
+                            decoration: InputDecoration(
+                              labelText: "ثبت نظر",
+                              labelStyle: TextStyle(
+                                fontSize: 18,
+                                fontFamily: "SM",
+                                color: Colors.black,
+                              ),
+                              enabledBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.all(
+                                  Radius.circular(20),
+                                ),
+                                borderSide: BorderSide(
+                                  color: Colors.black,
+                                  width: 2,
+                                ),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.all(
+                                  Radius.circular(20),
+                                ),
+                                borderSide: BorderSide(
+                                  color: ColorApplication.blueIndicator,
+                                  width: 2,
+                                ),
+                              ),
+                            ),
+                          ),
+
+                          Stack(
+                            alignment: AlignmentDirectional.bottomCenter,
+                            children: [
+                              Container(
+                                height: 60,
+                                width: 140,
+
+                                decoration: BoxDecoration(
+                                  color: ColorApplication.blueIndicator,
+                                  borderRadius: BorderRadius.all(
+                                    Radius.circular(15),
+                                  ),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      // ignore: deprecated_member_use
+                                      color: Colors.black.withOpacity(0.5),
+                                      blurRadius: 15,
+                                      spreadRadius: -5,
+                                      offset: Offset(0, 15),
+                                    ),
+                                  ],
+                                ),
+                              ),
+
+                              ClipRRect(
+                                borderRadius: BorderRadius.circular(15),
+                                child: Stack(
+                                  children: [
+                                    BackdropFilter(
+                                      filter: ImageFilter.blur(
+                                        sigmaX: 20,
+                                        sigmaY: 20,
+                                      ),
+                                      child: Container(
+                                        width: 60,
+                                        color: Colors.white.withValues(
+                                          alpha: 0.2,
+                                        ),
+                                      ),
+                                    ),
+                                    GestureDetector(
+                                      onTap: () {
+                                        context.read<CommentBloc>().add(
+                                          CommentPostEvent(
+                                            productId,
+                                            // You might want to pass the actual comment text here
+                                            "Sample comment",
+                                          ),
+                                        );
+                                      },
+                                      child: Container(
+                                        height: 53,
+                                        width: 160,
+                                        alignment: Alignment.center,
+                                        child: Text(
+                                          "افزودن نظر محصول",
+                                          style: TextStyle(
+                                            fontFamily: "SB",
+                                            fontSize: 14,
+                                            color: Colors.white,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ],
             );
           });
         } else {

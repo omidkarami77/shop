@@ -8,10 +8,6 @@ import 'package:shop/constants/colors.dart';
 import 'package:shop/data/model/basket_item.dart';
 import 'package:shop/util/extentions/string_extentions.dart';
 import 'package:shop/widgets/catched_image.dart';
-import 'package:url_launcher/url_launcher.dart';
-
-import 'package:app_links/app_links.dart';
-import 'package:zarinpal/zarinpal.dart';
 
 class CardScreen extends StatefulWidget {
   const CardScreen({super.key});
@@ -21,64 +17,9 @@ class CardScreen extends StatefulWidget {
 }
 
 class _CardScreenState extends State<CardScreen> {
-  PaymentRequest paymentRequest = PaymentRequest();
-  String? _paymentStatus;
-  String? _authority;
-
   @override
   void initState() {
     super.initState();
-
-    paymentRequest.setIsSandBox(true);
-    paymentRequest.setAmount(5000000000);
-    paymentRequest.setDescription("test payment");
-    paymentRequest.setCallbackURL("expertflutter://shop");
-    debugPrint('--- PaymentRequest مقداردهی شد ---');
-    debugPrint('sandbox: true');
-    debugPrint('amount: 10000');
-    debugPrint('description: test payment');
-    debugPrint('callbackURL: expertflutter://shop');
-
-    final appLinks = AppLinks();
-    appLinks.stringLinkStream.listen((String? link) {
-      debugPrint('--- appLinks callback ---');
-      debugPrint('link: $link');
-      if (link != null && link.contains('expertflutter://shop')) {
-        Uri uri = Uri.parse(link);
-        String? status = uri.queryParameters['status'];
-        String? authority = uri.queryParameters['authority'];
-        debugPrint('status: $status');
-        debugPrint('authority: $authority');
-
-        // فقط برای تست: اگر authority مقدار داشت، status را 100 فرض کن
-        if (authority != null && authority.isNotEmpty) {
-          status = '100';
-        }
-
-        setState(() {
-          _paymentStatus = status;
-          _authority = authority;
-        });
-
-        if (status == '100') {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(
-                'پرداخت با موفقیت انجام شد!\nکد پیگیری: $authority',
-              ),
-              backgroundColor: Colors.green,
-            ),
-          );
-        } else {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('پرداخت ناموفق بود یا لغو شد!'),
-              backgroundColor: Colors.red,
-            ),
-          );
-        }
-      }
-    });
   }
 
   @override
@@ -175,32 +116,11 @@ class _CardScreenState extends State<CardScreen> {
                   ),
                   child: ElevatedButton(
                     onPressed: () async {
-                      ZarinPal().startPayment(paymentRequest, (
-                        int? status,
-                        String? paymentGateWayUri,
-                        Map<String, dynamic>? data,
-                      ) {
-                        debugPrint('نتیجه startPayment:');
-                        debugPrint('status: $status');
-                        debugPrint('paymentGateWayUri: $paymentGateWayUri');
-                        debugPrint('data: $data');
-                        if (status == 100 && paymentGateWayUri != null) {
-                          launchUrl(
-                            Uri.parse(paymentGateWayUri),
-                            mode: LaunchMode.externalApplication,
-                          );
-                        } else {
-                          debugPrint("پرداخت انجام نشد یا خطا رخ داد: $status");
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text(
-                                'پرداخت انجام نشد یا خطا رخ داد: $status',
-                              ),
-                              backgroundColor: Colors.red,
-                            ),
-                          );
-                        }
-                      });
+                      context.read<BasketBloc>().add(BasketPaymentInitEvent());
+
+                      context.read<BasketBloc>().add(
+                        BasketPaymentRequestEvent(),
+                      );
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor:
