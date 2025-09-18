@@ -1,0 +1,209 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:shop/bloc/authentication/auth_bloc.dart';
+import 'package:shop/constants/colors.dart';
+
+class RegisterScreen extends StatelessWidget {
+  const RegisterScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    TextEditingController usernameController = TextEditingController(
+      text: 'omidlaiali2',
+    );
+    TextEditingController passwordController = TextEditingController(
+      text: '12345678',
+    );
+
+    TextEditingController confirmPasswordController = TextEditingController(
+      text: '12345678',
+    );
+
+    return Directionality(
+      textDirection: TextDirection.rtl,
+      child: Scaffold(
+        backgroundColor: ColorApplication.blueIndicator,
+        body: Column(
+          children: [
+            Expanded(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Image.asset(
+                    "assets/images/icon_application.png",
+                    width: 100,
+                    height: 100,
+                  ),
+                  SizedBox(height: 20),
+                  Text(
+                    "اپل شاپ",
+                    style: TextStyle(
+                      fontFamily: "SB",
+                      fontSize: 24,
+                      color: Colors.white,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Expanded(
+              child: Container(
+                padding: EdgeInsets.all(20),
+                margin: EdgeInsets.all(20),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.all(Radius.circular(15)),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.2),
+                      blurRadius: 20,
+                      spreadRadius: 5,
+                      offset: Offset(0, 8),
+                    ),
+                  ],
+                ),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    TextField(
+                      controller: usernameController,
+                      decoration: InputDecoration(
+                        labelText: "نام کاربری",
+                        labelStyle: TextStyle(
+                          fontSize: 18,
+                          fontFamily: "SM",
+                          color: Colors.black,
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(20)),
+                          borderSide: BorderSide(color: Colors.black, width: 2),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(20)),
+                          borderSide: BorderSide(
+                            color: ColorApplication.blueIndicator,
+                            width: 2,
+                          ),
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 20),
+
+                    TextField(
+                      controller: passwordController,
+                      decoration: InputDecoration(
+                        labelText: "رمز عبور",
+                        labelStyle: TextStyle(
+                          fontSize: 18,
+                          fontFamily: "SM",
+                          color: Colors.black,
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(20)),
+                          borderSide: BorderSide(color: Colors.black, width: 2),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(20)),
+                          borderSide: BorderSide(
+                            color: ColorApplication.blueIndicator,
+                            width: 2,
+                          ),
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 20),
+
+                    TextField(
+                      controller: confirmPasswordController,
+                      decoration: InputDecoration(
+                        labelText: "تکرار رمز عبور",
+                        labelStyle: TextStyle(
+                          fontSize: 18,
+                          fontFamily: "SM",
+                          color: Colors.black,
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(20)),
+                          borderSide: BorderSide(color: Colors.black, width: 2),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(20)),
+                          borderSide: BorderSide(
+                            color: ColorApplication.blueIndicator,
+                            width: 2,
+                          ),
+                        ),
+                      ),
+                    ),
+
+                    SizedBox(height: 20),
+                    BlocBuilder<AuthBloc, AuthState>(
+                      builder: (context, state) {
+                        if (state is AuthenticationInitial) {
+                          return ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              minimumSize: Size(200, 50),
+                              backgroundColor: ColorApplication.blueIndicator,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              padding: EdgeInsets.symmetric(vertical: 15),
+                            ),
+                            onPressed: () {
+                              BlocProvider.of<AuthBloc>(context).add(
+                                AuthRegisterRequest(
+                                  usernameController.text,
+                                  passwordController.text,
+                                  confirmPasswordController.text,
+                                ),
+                              );
+                            },
+                            child: Text(
+                              "ثبت نام",
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontFamily: "SB",
+                                fontSize: 18,
+                              ),
+                            ),
+                          );
+                        }
+                        if (state is AuthSateLoading) {
+                          return Center(child: CircularProgressIndicator());
+                        }
+
+                        if (state is AuthResponseState) {
+                          return state.response.fold(
+                            (error) => Text(
+                              error,
+                              style: TextStyle(
+                                color: Colors.red,
+                                fontFamily: "SM",
+                                fontSize: 16,
+                              ),
+                            ),
+                            (success) => Text(
+                              success,
+                              style: TextStyle(
+                                color: Colors.green,
+                                fontFamily: "SM",
+                                fontSize: 16,
+                              ),
+                            ),
+                          );
+                        }
+
+                        return Text("خطای نا مشخص");
+                      },
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}

@@ -23,7 +23,7 @@ class AuthenticationRemote implements IAuthenticationRemote {
     String passwordConfirm,
   ) async {
     try {
-      await _loginDio.post(
+      final response = await _loginDio.post(
         'api/collections/users/records',
         data: {
           'username': username,
@@ -31,6 +31,9 @@ class AuthenticationRemote implements IAuthenticationRemote {
           'passwordConfirm': passwordConfirm,
         },
       );
+      if (response.statusCode == 200) {
+        AuthManager.saveId(response.data['id']);
+      }
     } on DioException catch (e) {
       throw ApiException(
         code: e.response?.statusCode,

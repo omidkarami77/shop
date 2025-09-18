@@ -20,6 +20,12 @@ class _CardScreenState extends State<CardScreen> {
   @override
   void initState() {
     super.initState();
+    // ارسال event اولیه فقط یکبار بعد از mount شدن ویجت
+    Future.microtask(() {
+      if (mounted) {
+        context.read<BasketBloc>().add(BasketFetchFromHiveEvent());
+      }
+    });
   }
 
   @override
@@ -34,7 +40,7 @@ class _CardScreenState extends State<CardScreen> {
                 slivers: [
                   SliverToBoxAdapter(
                     child: Padding(
-                      padding: EdgeInsetsGeometry.only(
+                      padding: const EdgeInsets.only(
                         left: 44,
                         right: 44,
                         bottom: 32,
@@ -47,8 +53,7 @@ class _CardScreenState extends State<CardScreen> {
                           borderRadius: BorderRadius.circular(15),
                           boxShadow: [
                             BoxShadow(
-                              // ignore: deprecated_member_use
-                              color: Colors.black.withOpacity(0.5),
+                              color: Colors.black.withValues(alpha: 0.5),
                               blurRadius: 15,
                               spreadRadius: -5,
                               offset: Offset(0, 15),
@@ -64,7 +69,6 @@ class _CardScreenState extends State<CardScreen> {
                                 height: 25,
                                 width: 25,
                               ),
-
                               Expanded(
                                 child: Text(
                                   textAlign: TextAlign.center,
@@ -89,13 +93,16 @@ class _CardScreenState extends State<CardScreen> {
                         child: Center(child: Text("خطا در بارگذاری اطلاعات")),
                       ),
                       (basketItemList) {
+                        if (basketItemList.isEmpty) {
+                          return SliverToBoxAdapter(
+                            child: Center(child: Text("سبد خرید خالی است")),
+                          );
+                        }
                         return SliverList(
-                          delegate: SliverChildBuilderDelegate((
-                            context,
-                            index,
-                          ) {
-                            return CardItem(basketItemList[index]);
-                          }, childCount: basketItemList.length),
+                          delegate: SliverChildBuilderDelegate(
+                            (context, index) => CardItem(basketItemList[index]),
+                            childCount: basketItemList.length,
+                          ),
                         );
                       },
                     ),
@@ -116,27 +123,22 @@ class _CardScreenState extends State<CardScreen> {
                   ),
                   child: ElevatedButton(
                     onPressed: () async {
+                      if (!mounted) return;
                       context.read<BasketBloc>().add(BasketPaymentInitEvent());
-
+                      if (!mounted) return;
                       context.read<BasketBloc>().add(
                         BasketPaymentRequestEvent(),
                       );
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor:
-                          ColorApplication.green, // رنگ پس‌زمینه دکمه
-                      minimumSize: Size(
-                        MediaQuery.of(context).size.width,
-                        53,
-                      ), // عرض و ارتفاع دکمه
+                      backgroundColor: ColorApplication.green,
+                      minimumSize: Size(MediaQuery.of(context).size.width, 53),
                       padding: EdgeInsets.symmetric(
                         horizontal: 20,
                         vertical: 12,
-                      ), // فاصله داخلی
+                      ),
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(
-                          15,
-                        ), // گرد کردن گوشه‌ها
+                        borderRadius: BorderRadius.circular(15),
                       ),
                     ),
                     child: Text(

@@ -20,10 +20,13 @@ import 'package:shop/data/repository/comment_repository.dart';
 import 'package:shop/data/repository/product_detail_repository.dart';
 import 'package:shop/data/repository/product_repository.dart';
 import 'package:shop/util/dio_provider.dart';
+import 'package:shop/util/payment_handler.dart';
 
 var locator = GetIt.instance;
 
 Future<void> getItInit() async {
+  locator.registerSingleton<PaymentHandler>(ZarinPalPayment());
+
   locator.registerSingleton<SharedPreferences>(
     await SharedPreferences.getInstance(),
   );
@@ -65,7 +68,9 @@ Future<void> getItInit() async {
   locator.registerFactory<IBasketDataSource>(() => BasketLocalDataSource());
 
   locator.registerFactory<IBasketRepository>(() => BasketRepository());
-  locator.registerSingleton<BasketBloc>(BasketBloc());
+  locator.registerFactory<BasketBloc>(
+    () => BasketBloc(locator.get(), locator.get()),
+  );
 
   locator.registerFactory<ICommentDataSource>(() => CommentDatasource());
   locator.registerFactory<ICommentRepository>(() => CommentRepository());

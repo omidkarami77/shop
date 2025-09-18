@@ -187,11 +187,7 @@ List<Widget> getScreens() {
     */
     ProfileScreen(),
     BlocProvider(
-      create: (context) {
-        final bloc = locator.get<BasketBloc>();
-        bloc.add(BasketFetchFromHiveEvent());
-        return bloc;
-      },
+      create: (context) => locator.get<BasketBloc>(),
       child: CardScreen(),
     ),
 
